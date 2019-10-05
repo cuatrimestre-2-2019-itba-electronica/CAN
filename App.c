@@ -50,16 +50,19 @@ void App_Init (void)
 void App_Run (void)
 {
 	//Primero pruebo si funciona MCP25625_SEND, DESP SI FUNCA SEND2CAN, DESP SI FUNCA SENDCOORD
-	/*coords temp;
-	coords temp2;
-	char dato[3]={'-','9','0'};
+	coords temp;
+	char dato[3]={'+','4','5'};
 	temp.ID=0x104;
-	temp.coordType=CABECEO;
+	temp.coordType=ORIENTACION;
 	temp.data_len=3;
 	for(int i=0;i<3;i++)
 		temp.data[i]=dato[i];
+	//UN SYSTICK
 	sendCoords(temp);
-	receiveCoord(&temp2);*/
+	/*if(receiveCoord(&temp))
+	{
+		int a=3;
+	}*/
 }
 
 

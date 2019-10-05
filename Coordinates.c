@@ -34,17 +34,25 @@ bool receiveCoord(coords * coord2receive)
 	int tempID;
 	int tempLen;
 	char tempData[8];
-	receiveFromCAN(&tempID,tempData,&tempLen);
-	coord2receive->ID=tempID;
-	if(tempData[0]=='C')
-		coord2receive->coordType=CABECEO;
-	else if(tempData[0]=='R')
-		coord2receive->coordType=ROLIDO;
-	else if(tempData[0]=='O')
-		coord2receive->coordType=ORIENTACION;
-	for(int i=0;i<tempLen-1;i++)
+	bool hay_algo;
+	hay_algo= receiveFromCAN(&tempID,tempData,&tempLen);
+	if(hay_algo)
 	{
-		coord2receive->data[i]=tempData[i+1];
+		coord2receive->ID=tempID;
+		coord2receive->data_len=tempLen;
+		if(tempData[0]=='C')
+			coord2receive->coordType=CABECEO;
+		else if(tempData[0]=='R')
+			coord2receive->coordType=ROLIDO;
+		else if(tempData[0]=='O')
+			coord2receive->coordType=ORIENTACION;
+		for(int i=0;i<tempLen-1;i++)
+		{
+			coord2receive->data[i]=tempData[i+1];
+		}
+		return true;
 	}
-	return true;
+	else
+		return false;
+
 }

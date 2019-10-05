@@ -1,9 +1,9 @@
+#include <bufferCAN.h>
 #include"SPI.h"
 #include <stdio.h>
 #include "gpio.h"
 #include "board.h"
 #include "MCP25625.h"
-#include "buffer.h"
 
 #define DLC 7
 
@@ -57,7 +57,7 @@ void MCP25625_interrupt_callback(void)
 		}
 
 		//Agrego el mensaje de CAN al buffer
-		push_buffer(&recBuff, data2add);
+		push_bufferCAN(&recBuff, data2add);
 
 		//char temp=0;
 		//MCP25625_WRITE(CANINTF,&temp,1);
@@ -70,7 +70,7 @@ void MCP25625_interrupt_callback(void)
 	{
 		//Obtengo el mensaje a transmitir
 		CANmsg tempMsg;
-		tempMsg=pop_buffer(&transBuff);
+		tempMsg=pop_bufferCAN(&transBuff);
 
 		//Lo cargo al buffer del controlador apropiado
 		MCP25625_send(tempMsg.id,tempMsg.data, tempMsg.size,0);
@@ -84,10 +84,10 @@ void MCP25625_init(int ID, int mask, int filter)
 
 	char auxbuffer[3];
 	//Inicializo la estructura que utilizo como buffer de recepción
-	init_buffer(&recBuff,BUFFER_SIZE);
+	init_bufferCAN(&recBuff,BUFFER_SIZE);
 
 	//Inicializo la estructura que utilizo como buffer de transmisión
-	init_buffer(&transBuff,BUFFER_SIZE);
+	init_bufferCAN(&transBuff,BUFFER_SIZE);
 
 	//Inicializo el driver de SPI
 	SPI_driver_init();
@@ -152,7 +152,7 @@ bool MCP25625_send(int ID,char * databuffer, int bufflen, int whichbuffer)//por 
 	TXREQ=(bufferaux[1]>>3) & 1;
 
 	//Si no hay transmisión pendiente
-	//if(TXREQ==0)
+	if(TXREQ==0)
 	{
 		//Cargo el ID recibido al buffer
 		bufferaux[0]=(char)(0xFF &(ID>>3));
@@ -228,7 +228,7 @@ bool send2CAN(int ID, int size, char * buffer)
 	data2add.size=size;
 	for(int i=0;i<size;i++)
 		data2add.data[i]=buffer[i];
-	push_buffer(&transBuff, data2add);
+	push_bufferCAN(&transBuff, data2add);
 	return true;
 }
 
@@ -236,14 +236,20 @@ bool send2CAN(int ID, int size, char * buffer)
 bool receiveFromCAN(int * ID,char * data, int * data_len)
 {
 	CANmsg data2pop;
-	data2pop= pop_buffer(&recBuff);
-	ID[0]=data2pop.id;
-	data_len[0]=data2pop.size;
-	for(int i=0;i<data2pop.size;i++)
+	if(buffer_is_emptyCAN(&recBuff)==0)
 	{
-		data[i]=data2pop.data[i];
+		data2pop= pop_bufferCAN(&recBuff);
+		ID[0]=data2pop.id;
+		data_len[0]=data2pop.size;
+		for(int i=0;i<data2pop.size;i++)
+		{
+			data[i]=data2pop.data[i];
+		}
+		return true;
 	}
-	return true;
+	else
+		return false;
+
 }
 
 //FUNCIONES ESTÁTICAS UTILIZADAS SOLO EN ESTE .c
