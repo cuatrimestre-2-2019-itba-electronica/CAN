@@ -13,9 +13,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <assert.h>
+#include "Coordinates.h"
 #include "MCP25625.h"
 #include "board.h"
-#include "gpio.h"
 
 
 
@@ -40,24 +40,26 @@
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-	MCP25625_init(0);
-
+	//init_coords();
+	int mask=0x7F8;
+	int filter=0x100;
+	MCP25625_init(0,mask,filter);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
-
 void App_Run (void)
 {
-	/*char databuffer1[1]={1};
-	MCP25625_send(0x104,databuffer1, 1);
-	char databuffer2[2]={1,2};
-	MCP25625_send(0x104,databuffer2, 2);
-	char databuffer3[3]={1,2,3};
-	MCP25625_send(0x104,databuffer3, 3);
-	char databuffer4[4]={1,2,3,4};
-	MCP25625_send(0x104,databuffer4, 4);
-	char databuffer5[5]={1,2,3,4,5};
-	MCP25625_send(0x104,databuffer5, 5);*/
+	//Primero pruebo si funciona MCP25625_SEND, DESP SI FUNCA SEND2CAN, DESP SI FUNCA SENDCOORD
+	/*coords temp;
+	coords temp2;
+	char dato[3]={'-','9','0'};
+	temp.ID=0x104;
+	temp.coordType=CABECEO;
+	temp.data_len=3;
+	for(int i=0;i<3;i++)
+		temp.data[i]=dato[i];
+	sendCoords(temp);
+	receiveCoord(&temp2);*/
 }
 
 

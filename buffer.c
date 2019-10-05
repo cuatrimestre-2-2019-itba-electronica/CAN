@@ -1,14 +1,14 @@
 #include "buffer.h"
 
 
-void init_buffer(circ_bbuf_t * buff,int len)
+void init_buffer(circ_buff_t * buff,int len)
 {
 	buff->len=len;
 	buff->head=0;
 	buff->tail=0;
 }
 
-void  push_buffer(circ_bbuf_t * buff, CANmsg data)
+void  push_buffer(circ_buff_t * buff, CANmsg data)
 {
 	int next;
 	next = buff->head + 1;  // next is where head will point to after this write.
@@ -18,7 +18,7 @@ void  push_buffer(circ_bbuf_t * buff, CANmsg data)
 	buff->head = next;             // head to next data offset.
 }
 
-CANmsg pop_buffer(circ_bbuf_t * buff)
+CANmsg pop_buffer(circ_buff_t * buff)
 {
 	CANmsg data;
 	int next;
@@ -29,7 +29,7 @@ CANmsg pop_buffer(circ_bbuf_t * buff)
 	buff->tail = next;              // tail to next offset.
 	return data;
 }
-int buffer_is_full(circ_bbuf_t * buff)
+int buffer_is_full(circ_buff_t * buff)
 {
 	int next;
 	    next = buff->head + 1;  // next is where head will point to after this write.
@@ -42,7 +42,7 @@ int buffer_is_full(circ_bbuf_t * buff)
 	    	return 0;
 }
 
-int buffer_is_empty(circ_bbuf_t * buff)
+int buffer_is_empty(circ_buff_t * buff)
 {
 	if (buff->head == buff->tail)  // if the head == tail, we don't have any data
 		return 1;

@@ -11,7 +11,7 @@
 #define SPI_DRIVER_MODE		2 //alternativa
 #define SPI_DRIVER_INPUT	1
 
-#define SPI_DRIVER_BR 4
+#define SPI_DRIVER_BR 5
 #define SPI_DRIVER_PBR 1
 
 typedef uint8_t pin_t;

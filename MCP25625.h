@@ -107,6 +107,12 @@ typedef enum{NORMAL,SLEEP,LOOPBACK,LISTEN_ONLY,CONFIGURATION} operation_mode_t;
 #define CLKPRE_MASK 0x03
 #define CLKPRE_DATA(x) (char)((char)x<<0)
 
+//TXBXCTRL
+#define TXREQ_MASK 0x08
+#define TXREQ_DATA(x) (char)((char)x<<3)
+#define T_PRIORITY_MASK 0x03
+#define T_PRIORITY_DATA(x) (char)((char)x<<0)
+
 //RXB0CTRL
 #define RECEIVE_MODE_MASK 0x60
 #define RECEIVE_MODE_DATA(x) (char)((char)x<<5)
@@ -151,13 +157,12 @@ typedef enum{NORMAL,SLEEP,LOOPBACK,LISTEN_ONLY,CONFIGURATION} operation_mode_t;
 
 //FUNCIONES
 //
-void MCP25625_init(int ID);
+void MCP25625_init(int ID, int mask, int filter);
 
-//
-void MCP25625_send(int ID,char * databuffer, int bufflen);
 
+//FALTARIA VER SI ESTAS FUNCIONES NO DEBERIAN SER ESTÁTICAS (TODAS LAS QUE ARRANCAN CON MCP25625)
 //
-void MCP25625_receive(char * buffer, int bufflen);
+bool MCP25625_send(int ID,char * databuffer, int bufflen, int whichbuffer);
 
 //
 bool MCP25625_isTbuffer_empty(int buff_num, char rgstr);
@@ -165,4 +170,9 @@ bool MCP25625_isTbuffer_empty(int buff_num, char rgstr);
 //
 bool MCP25625_isRbuffer_full(int buff_num, char rgstr);
 
+//
+bool send2CAN(int ID, int size, char * buffer);
+
+//
+bool receiveFromCAN(int * ID, char * data, int * data_len);
 #endif /* MCP25625_H_ */
